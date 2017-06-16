@@ -8,6 +8,10 @@ import (
 	"testing"
 )
 
+/*
+go test -v -run TestArchiver -logtostderr
+*/
+
 func TestArchiver(t *testing.T) {
 	for name, ar := range SupportedFormats {
 		name, ar := name, ar
@@ -34,7 +38,7 @@ func symmetricTest(t *testing.T, name string, ar Archiver) {
 
 	// Test creating archive
 	outfile := filepath.Join(tmp, "test-"+name)
-	err = ar.Make(outfile, []string{"testdata"})
+	err = ar.Make(outfile, []string{"testdata"}, WithVerbose())
 	if err != nil {
 		t.Fatalf("making archive: didn't expect an error, but got: %v", err)
 	}
@@ -52,7 +56,7 @@ func symmetricTest(t *testing.T, name string, ar Archiver) {
 	// Test extracting archive
 	dest := filepath.Join(tmp, "extraction_test")
 	os.Mkdir(dest, 0755)
-	err = ar.Open(outfile, dest)
+	err = ar.Open(outfile, dest, WithVerbose())
 	if err != nil {
 		t.Fatalf("extracting archive [%s -> %s]: didn't expect an error, but got: %v", outfile, dest, err)
 	}
