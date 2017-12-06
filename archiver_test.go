@@ -39,13 +39,13 @@ func testWriteRead(t *testing.T, name string, ar Archiver) {
 	defer os.RemoveAll(tmp)
 
 	// Test creating archive
-	err = ar.Write(buf, []string{"testdata"})
+	err = ar.Write(buf, []string{"testdata"}, false)
 	if err != nil {
 		t.Fatalf("[%s] writing archive: didn't expect an error, but got: %v", name, err)
 	}
 
 	// Test extracting archive
-	err = ar.Read(buf, tmp)
+	err = ar.Read(buf, tmp, false)
 	if err != nil {
 		t.Fatalf("[%s] reading archive: didn't expect an error, but got: %v", name, err)
 	}
