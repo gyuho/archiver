@@ -65,7 +65,7 @@ func (tarLz4Format) Make(tarlz4Path string, filePaths []string, opts ...OpOption
 	}
 	defer out.Close()
 
-	return writeTarLz4(filePaths, out, tarlz4Path)
+	return writeTarLz4(filePaths, out, tarlz4Path, ret.verbose)
 }
 
 func writeTarLz4(filePaths []string, output io.Writer, dest string, verbose bool) error {
