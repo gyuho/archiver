@@ -1,5 +1,10 @@
-archiver [![archiver GoDoc](https://img.shields.io/badge/reference-godoc-blue.svg?style=flat-square)](https://godoc.org/github.com/mholt/archiver) [![Linux Build Status](https://img.shields.io/travis/mholt/archiver.svg?style=flat-square&label=linux+build)](https://travis-ci.org/mholt/archiver) [![Windows Build Status](https://img.shields.io/appveyor/ci/mholt/archiver.svg?style=flat-square&label=windows+build)](https://ci.appveyor.com/project/mholt/archiver)
+archiver
 ========
+
+[![archiver GoDoc](https://img.shields.io/badge/reference-godoc-blue.svg?style=flat-square)](https://godoc.org/github.com/gyuho/archiver)
+[![Linux Build Status](https://img.shields.io/travis/gyuho/archiver.svg?style=flat-square&label=linux+build)](https://travis-ci.org/gyuho/archiver)
+
+TODO: [![Windows Build Status](https://img.shields.io/appveyor/ci/mholt/archiver.svg?style=flat-square&label=windows+build)](https://ci.appveyor.com/project/mholt/archiver)
 
 Package archiver makes it trivially easy to make and extract common archive formats such as .zip, and .tar.gz. Simply name the input and output file(s).
 
@@ -22,10 +27,10 @@ Supported formats/extensions:
 ## Install
 
 ```bash
-go get github.com/mholt/archiver/cmd/archiver
+go get github.com/gyuho/archiver/cmd/archiver
 ```
 
-Or download binaries from the [releases](https://github.com/mholt/archiver/releases) page.
+Or download binaries from the [releases](https://github.com/gyuho/archiver/releases) page.
 
 
 ## Command Use
@@ -52,7 +57,7 @@ The archive name must end with a supported file extension&mdash;this is how it k
 ## Library Use
 
 ```go
-import "github.com/mholt/archiver"
+import "github.com/gyuho/archiver"
 ```
 
 Create a .zip file:
@@ -67,7 +72,7 @@ Extract a .zip file:
 err := archiver.Zip.Open("input.zip", "output_folder")
 ```
 
-Working with other file formats is exactly the same, but with [their own Archiver implementations](https://godoc.org/github.com/mholt/archiver#Archiver).
+Working with other file formats is exactly the same, but with [their own Archiver implementations](https://godoc.org/github.com/gyuho/archiver#Archiver).
 
 
 
