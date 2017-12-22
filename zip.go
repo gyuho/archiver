@@ -60,7 +60,7 @@ func (zipFormat) Write(output io.Writer, filePaths []string, verbose bool) error
 		if verbose {
 			glog.Infof("zipping %q", fpath)
 		}
-		if err := zipFile(w, fpath); err != nil {
+		if err := zipFile(w, fpath, verbose); err != nil {
 			w.Close()
 			return err
 		}
@@ -90,7 +90,7 @@ func (zipFormat) Make(zipPath string, filePaths []string, opts ...OpOption) erro
 	return Zip.Write(out, filePaths, ret.verbose)
 }
 
-func zipFile(w *zip.Writer, source string) error {
+func zipFile(w *zip.Writer, source string, verbose bool) error {
 	sourceInfo, err := os.Stat(source)
 	if err != nil {
 		return fmt.Errorf("%s: stat: %v", source, err)
@@ -102,6 +102,9 @@ func zipFile(w *zip.Writer, source string) error {
 	}
 
 	return filepath.Walk(source, func(fpath string, info os.FileInfo, err error) error {
+		if verbose {
+			glog.Infof("zipping(walk) %q", fpath)
+		}
 		if err != nil {
 			return fmt.Errorf("walking to %s: %v", fpath, err)
 		}
