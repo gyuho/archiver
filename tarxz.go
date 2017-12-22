@@ -53,8 +53,8 @@ func isTarXz(tarxzPath string) bool {
 // can be those of regular files or directories. Regular
 // files are stored at the 'root' of the archive, and
 // directories are recursively added.
-func (xzFormat) Write(output io.Writer, filePaths []string, verbose bool) error {
-	return writeTarXZ(filePaths, output, "", verbose)
+func (xzFormat) Write(output io.Writer, filePaths []string, op Op) error {
+	return writeTarXZ(filePaths, output, "", op)
 }
 
 // Make creates a .tar.xz file at xzPath containing
@@ -72,28 +72,28 @@ func (xzFormat) Make(xzPath string, filePaths []string, opts ...OpOption) error 
 	}
 	defer out.Close()
 
-	return writeTarXZ(filePaths, out, xzPath, ret.verbose)
+	return writeTarXZ(filePaths, out, xzPath, ret)
 }
 
-func writeTarXZ(filePaths []string, output io.Writer, dest string, verbose bool) error {
+func writeTarXZ(filePaths []string, output io.Writer, dest string, op Op) error {
 	xzw, err := xz.NewWriter(output)
 	if err != nil {
 		return fmt.Errorf("error compressing xz: %v", err)
 	}
 	defer xzw.Close()
 
-	return writeTar(filePaths, xzw, dest, verbose)
+	return writeTar(filePaths, xzw, dest, op)
 }
 
 // Read untars a .tar.xz file read from a Reader and decompresses
 // the contents into destination.
-func (xzFormat) Read(input io.Reader, destination string, verbose bool) error {
+func (xzFormat) Read(input io.Reader, destination string, op Op) error {
 	xzr, err := xz.NewReader(input)
 	if err != nil {
 		return fmt.Errorf("error decompressing xz: %v", err)
 	}
 
-	return Tar.Read(xzr, destination, verbose)
+	return Tar.Read(xzr, destination, op)
 }
 
 // Open untars source and decompresses the contents into destination.
@@ -107,5 +107,5 @@ func (xzFormat) Open(source, destination string, opts ...OpOption) error {
 	}
 	defer f.Close()
 
-	return TarXZ.Read(f, destination, ret.verbose)
+	return TarXZ.Read(f, destination, ret)
 }

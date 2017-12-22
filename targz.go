@@ -50,8 +50,8 @@ func isTarGz(targzPath string) bool {
 // Write outputs a .tar.gz file to a Writer containing
 // the contents of files listed in filePaths. It works
 // the same way Tar does, but with gzip compression.
-func (tarGzFormat) Write(output io.Writer, filePaths []string, verbose bool) error {
-	return writeTarGz(filePaths, output, "", verbose)
+func (tarGzFormat) Write(output io.Writer, filePaths []string, op Op) error {
+	return writeTarGz(filePaths, output, "", op)
 }
 
 // Make creates a .tar.gz file at targzPath containing
@@ -67,26 +67,26 @@ func (tarGzFormat) Make(targzPath string, filePaths []string, opts ...OpOption) 
 	}
 	defer out.Close()
 
-	return writeTarGz(filePaths, out, targzPath, ret.verbose)
+	return writeTarGz(filePaths, out, targzPath, ret)
 }
 
-func writeTarGz(filePaths []string, output io.Writer, dest string, verbose bool) error {
+func writeTarGz(filePaths []string, output io.Writer, dest string, op Op) error {
 	gzw := gzip.NewWriter(output)
 	defer gzw.Close()
 
-	return writeTar(filePaths, gzw, dest, verbose)
+	return writeTar(filePaths, gzw, dest, op)
 }
 
 // Read untars a .tar.gz file read from a Reader and decompresses
 // the contents into destination.
-func (tarGzFormat) Read(input io.Reader, destination string, verbose bool) error {
+func (tarGzFormat) Read(input io.Reader, destination string, op Op) error {
 	gzr, err := gzip.NewReader(input)
 	if err != nil {
 		return fmt.Errorf("error decompressing: %v", err)
 	}
 	defer gzr.Close()
 
-	return Tar.Read(gzr, destination, verbose)
+	return Tar.Read(gzr, destination, op)
 }
 
 // Open untars source and decompresses the contents into destination.
@@ -100,5 +100,5 @@ func (tarGzFormat) Open(source, destination string, opts ...OpOption) error {
 	}
 	defer f.Close()
 
-	return TarGz.Read(f, destination, ret.verbose)
+	return TarGz.Read(f, destination, ret)
 }

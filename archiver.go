@@ -18,9 +18,9 @@ type Archiver interface {
 	// Open extracts an archive file on disk.
 	Open(source, destination string, opts ...OpOption) error
 	// Write writes an archive to a Writer.
-	Write(output io.Writer, sources []string, verbose bool) error
+	Write(output io.Writer, sources []string, op Op) error
 	// Read reads an archive from a Reader.
-	Read(input io.Reader, destination string, verbose bool) error
+	Read(input io.Reader, destination string, op Op) error
 }
 
 // SupportedFormats contains all supported archive formats

@@ -53,8 +53,8 @@ func isTarBz2(tarbz2Path string) bool {
 // can be those of regular files or directories. Regular
 // files are stored at the 'root' of the archive, and
 // directories are recursively added.
-func (tarBz2Format) Write(output io.Writer, filePaths []string, verbose bool) error {
-	return writeTarBz2(filePaths, output, "", verbose)
+func (tarBz2Format) Write(output io.Writer, filePaths []string, op Op) error {
+	return writeTarBz2(filePaths, output, "", op)
 }
 
 // Make creates a .tar.bz2 file at tarbz2Path containing
@@ -72,29 +72,29 @@ func (tarBz2Format) Make(tarbz2Path string, filePaths []string, opts ...OpOption
 	}
 	defer out.Close()
 
-	return writeTarBz2(filePaths, out, tarbz2Path, ret.verbose)
+	return writeTarBz2(filePaths, out, tarbz2Path, ret)
 }
 
-func writeTarBz2(filePaths []string, output io.Writer, dest string, verbose bool) error {
+func writeTarBz2(filePaths []string, output io.Writer, dest string, op Op) error {
 	bz2w, err := bzip2.NewWriter(output, nil)
 	if err != nil {
 		return fmt.Errorf("error compressing bzip2: %v", err)
 	}
 	defer bz2w.Close()
 
-	return writeTar(filePaths, bz2w, dest, verbose)
+	return writeTar(filePaths, bz2w, dest, op)
 }
 
 // Read untars a .tar.bz2 file read from a Reader and decompresses
 // the contents into destination.
-func (tarBz2Format) Read(input io.Reader, destination string, verbose bool) error {
+func (tarBz2Format) Read(input io.Reader, destination string, op Op) error {
 	bz2r, err := bzip2.NewReader(input, nil)
 	if err != nil {
 		return fmt.Errorf("error decompressing bzip2: %v", err)
 	}
 	defer bz2r.Close()
 
-	return Tar.Read(bz2r, destination, verbose)
+	return Tar.Read(bz2r, destination, op)
 }
 
 // Open untars source and decompresses the contents into destination.
@@ -108,5 +108,5 @@ func (tarBz2Format) Open(source, destination string, opts ...OpOption) error {
 	}
 	defer f.Close()
 
-	return TarBz2.Read(f, destination, ret.verbose)
+	return TarBz2.Read(f, destination, ret)
 }

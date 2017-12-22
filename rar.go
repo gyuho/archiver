@@ -45,7 +45,7 @@ func isRar(rarPath string) bool {
 // Write outputs a .rar archive, but this is not implemented because
 // RAR is a proprietary format. It is here only for symmetry with
 // the other archive formats in this package.
-func (rarFormat) Write(output io.Writer, filePaths []string, verbose bool) error {
+func (rarFormat) Write(output io.Writer, filePaths []string, op Op) error {
 	return fmt.Errorf("write: RAR not implemented (proprietary format)")
 }
 
@@ -61,7 +61,7 @@ func (rarFormat) Make(rarPath string, filePaths []string, opts ...OpOption) erro
 
 // Read extracts the RAR file read from input and puts the contents
 // into destination.
-func (rarFormat) Read(input io.Reader, destination string, verbose bool) error {
+func (rarFormat) Read(input io.Reader, destination string, op Op) error {
 	rr, err := rardecode.NewReader(input, "")
 	if err != nil {
 		return fmt.Errorf("read: failed to create reader: %v", err)
@@ -111,5 +111,5 @@ func (rarFormat) Open(source, destination string, opts ...OpOption) error {
 	}
 	defer rf.Close()
 
-	return Rar.Read(rf, destination, ret.verbose)
+	return Rar.Read(rf, destination, ret)
 }

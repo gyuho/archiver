@@ -46,8 +46,8 @@ func isTarSz(tarszPath string) bool {
 // can be those of regular files or directories. Regular
 // files are stored at the 'root' of the archive, and
 // directories are recursively added.
-func (tarSzFormat) Write(output io.Writer, filePaths []string, verbose bool) error {
-	return writeTarSz(filePaths, output, "", verbose)
+func (tarSzFormat) Write(output io.Writer, filePaths []string, op Op) error {
+	return writeTarSz(filePaths, output, "", op)
 }
 
 // Make creates a .tar.sz file at tarszPath containing
@@ -65,22 +65,22 @@ func (tarSzFormat) Make(tarszPath string, filePaths []string, opts ...OpOption) 
 	}
 	defer out.Close()
 
-	return writeTarSz(filePaths, out, tarszPath, ret.verbose)
+	return writeTarSz(filePaths, out, tarszPath, ret)
 }
 
-func writeTarSz(filePaths []string, output io.Writer, dest string, verbose bool) error {
+func writeTarSz(filePaths []string, output io.Writer, dest string, op Op) error {
 	szw := snappy.NewBufferedWriter(output)
 	defer szw.Close()
 
-	return writeTar(filePaths, szw, dest, verbose)
+	return writeTar(filePaths, szw, dest, op)
 }
 
 // Read untars a .tar.sz file read from a Reader and decompresses
 // the contents into destination.
-func (tarSzFormat) Read(input io.Reader, destination string, verbose bool) error {
+func (tarSzFormat) Read(input io.Reader, destination string, op Op) error {
 	szr := snappy.NewReader(input)
 
-	return Tar.Read(szr, destination, verbose)
+	return Tar.Read(szr, destination, op)
 }
 
 // Open untars source and decompresses the contents into destination.
@@ -94,5 +94,5 @@ func (tarSzFormat) Open(source, destination string, opts ...OpOption) error {
 	}
 	defer f.Close()
 
-	return TarSz.Read(f, destination, ret.verbose)
+	return TarSz.Read(f, destination, ret)
 }

@@ -46,8 +46,8 @@ func isTarLz4(tarlz4Path string) bool {
 // can be those of regular files or directories. Regular
 // files are stored at the 'root' of the archive, and
 // directories are recursively added.
-func (tarLz4Format) Write(output io.Writer, filePaths []string, verbose bool) error {
-	return writeTarLz4(filePaths, output, "", verbose)
+func (tarLz4Format) Write(output io.Writer, filePaths []string, op Op) error {
+	return writeTarLz4(filePaths, output, "", op)
 }
 
 // Make creates a .tar.lz4 file at tarlz4Path containing
@@ -65,22 +65,22 @@ func (tarLz4Format) Make(tarlz4Path string, filePaths []string, opts ...OpOption
 	}
 	defer out.Close()
 
-	return writeTarLz4(filePaths, out, tarlz4Path, ret.verbose)
+	return writeTarLz4(filePaths, out, tarlz4Path, ret)
 }
 
-func writeTarLz4(filePaths []string, output io.Writer, dest string, verbose bool) error {
+func writeTarLz4(filePaths []string, output io.Writer, dest string, op Op) error {
 	lz4w := lz4.NewWriter(output)
 	defer lz4w.Close()
 
-	return writeTar(filePaths, lz4w, dest, verbose)
+	return writeTar(filePaths, lz4w, dest, op)
 }
 
 // Read untars a .tar.xz file read from a Reader and decompresses
 // the contents into destination.
-func (tarLz4Format) Read(input io.Reader, destination string, verbose bool) error {
+func (tarLz4Format) Read(input io.Reader, destination string, op Op) error {
 	lz4r := lz4.NewReader(input)
 
-	return Tar.Read(lz4r, destination, verbose)
+	return Tar.Read(lz4r, destination, op)
 }
 
 // Open untars source and decompresses the contents into destination.
@@ -94,5 +94,5 @@ func (tarLz4Format) Open(source, destination string, opts ...OpOption) error {
 	}
 	defer f.Close()
 
-	return TarLz4.Read(f, destination, ret.verbose)
+	return TarLz4.Read(f, destination, ret)
 }
