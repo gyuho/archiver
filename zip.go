@@ -102,8 +102,16 @@ func zipFile(w *zip.Writer, source string, op Op) error {
 	}
 
 	return filepath.Walk(source, func(fpath string, info os.FileInfo, err error) error {
+		if op.directoryToIgnore != "" {
+			if strings.HasPrefix(fpath, op.directoryToIgnore) {
+				if op.verbose {
+					glog.Infof("walk: skipping %q (ignore %q)", fpath, op.directoryToIgnore)
+					return nil
+				}
+			}
+		}
 		if op.verbose {
-			glog.Infof("zipping(walk) %q", fpath)
+			glog.Infof("walk: zipping %q", fpath)
 		}
 		if err != nil {
 			return fmt.Errorf("walking to %s: %v", fpath, err)
