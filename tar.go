@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/golang/glog"
+	"go.uber.org/zap"
 )
 
 // Tar is for Tar format
@@ -120,7 +120,7 @@ func writeTar(filePaths []string, output io.Writer, dest string, op Op) error {
 func tarball(filePaths []string, tarWriter *tar.Writer, dest string, op Op) error {
 	for _, fpath := range filePaths {
 		if op.verbose {
-			glog.Infof("tar %q", fpath)
+			lg.Info("tar", zap.String("path", fpath))
 		}
 		err := tarFile(tarWriter, fpath, dest)
 		if err != nil {
@@ -222,7 +222,7 @@ func untar(tr *tar.Reader, destination string, op Op) error {
 		}
 
 		if op.verbose {
-			glog.Infof("untar %q", header.Name)
+			lg.Info("untar", zap.String("path", header.Name))
 		}
 		if err := untarFile(tr, header, destination); err != nil {
 			return err

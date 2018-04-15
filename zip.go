@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/golang/glog"
+	"go.uber.org/zap"
 )
 
 // Zip is for Zip format
@@ -58,7 +58,7 @@ func (zipFormat) Write(output io.Writer, filePaths []string, op Op) error {
 	w := zip.NewWriter(output)
 	for _, fpath := range filePaths {
 		if op.verbose {
-			glog.Infof("zipping %q", fpath)
+			lg.Info("zip", zap.String("path", fpath))
 		}
 		if err := zipFile(w, fpath, op); err != nil {
 			w.Close()
@@ -105,13 +105,17 @@ func zipFile(w *zip.Writer, source string, op Op) error {
 		if op.directoryToIgnore != "" {
 			if strings.HasPrefix(fpath, op.directoryToIgnore) {
 				if op.verbose {
-					glog.Infof("walk: skipping %q (ignore %q)", fpath, op.directoryToIgnore)
+					lg.Info(
+						"skip",
+						zap.String("path", fpath),
+						zap.String("ignore", op.directoryToIgnore),
+					)
 					return nil
 				}
 			}
 		}
 		if op.verbose {
-			glog.Infof("walk: zipping %q", fpath)
+			lg.Info("zip", zap.String("path", fpath))
 		}
 		if err != nil {
 			return fmt.Errorf("walking to %s: %v", fpath, err)
@@ -201,7 +205,7 @@ func (zipFormat) Open(source, destination string, opts ...OpOption) error {
 func unzipAll(r *zip.Reader, destination string, op Op) error {
 	for _, zf := range r.File {
 		if op.verbose {
-			glog.Infof("unzipping %q", zf.Name)
+			lg.Info("unzip", zap.String("path", zf.Name))
 		}
 		if err := unzipFile(zf, destination); err != nil {
 			return err
